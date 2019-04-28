@@ -28,8 +28,8 @@
           <span v-if="hasPrefix">
             {{ getPrefix }}
           </span>
-          <strong class="ds-ev-title">{{ details.title }}</strong>
-          <span class="ds-ev-description">{{ details.description }}</span>
+          <strong class="ds-ev-title">{{ details.subject }}</strong>
+          <span class="ds-ev-description">{{ details.remark }}</span>
 
         </slot>
       </span>

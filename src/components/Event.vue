@@ -63,18 +63,19 @@
       <slot name="scheduleTitle" v-bind="{schedule, schedule, calendarEvent, details}">
 
         <!-- class="ds-textfield ds-calendar-event-title" -->
-        <v-text-field single-line hide-details solo flat
+        <v-text-field 
           class="ds-event-title"
-          :label="labels.title"
+          :label="labels.subject"
           :readonly="isReadOnly"
-          v-model="details.title"
+          v-model="details.subject"
+          :rules="[rules.required]"
         ></v-text-field>
 
       </slot>
 
     </div>
 
-    <div class="ds-event-body ds-event-area">
+    <!-- <div class="ds-event-body ds-event-area">
 
       <slot name="schedule" v-bind="slotData">
 
@@ -86,206 +87,192 @@
 
       </slot>
 
-    </div>
+    </div> -->
 
-    <!-- Tabs -->
-    <v-layout row v-if="hasTabs">
-      <v-flex xs12 class="mt-2">
-        <v-tabs class="text--primary" v-model="tab">
+    <!-- Details -->
+    <v-card flat>
+      <v-card-text>
 
-          <v-tab href="#details" v-if="hasDetails">
-            {{ labels.tabs.details }}
-          </v-tab>
+        <!-- Location -->
+        <!-- <slot name="eventDetailsLocation" v-bind="slotData">
+          <v-text-field v-if="$dayspan.supports.location"
+            single-line hide-details solo flat
+            prepend-icon="location_on"
+            :label="labels.location"
+            :readonly="isReadOnly"
+            v-model="details.location"
+          ></v-text-field>
+        </slot>
+ -->
+        <!-- Description -->
+        <!-- <slot name="eventDetailsDescription" v-bind="slotData">
+          <v-textarea v-if="$dayspan.supports.description"
+            hide-details single-line solo flat
+            prepend-icon="subject"
+            :label="labels.description"
+            :readonly="isReadOnly"
+            v-model="details.description"
+          ></v-textarea>
+        </slot> -->
 
-          <v-tab href="#forecast" v-if="showForecast">
-            {{ labels.tabs.forecast }}
-          </v-tab>
+        <!-- Calendar -->
+        <!-- <slot name="eventDetailsCalendar" v-bind="slotData">
+          <v-text-field v-if="$dayspan.supports.calendar"
+            single-line hide-details solo flat readonly
+            prepend-icon="event"
+            :label="labels.calendar"
+            :readonly="isReadOnly"
+            v-model="details.calendar"
+          ></v-text-field>
+        </slot> -->
 
-          <v-tab href="#exclusions" v-if="showExclusions">
-            {{ labels.tabs.removed }}
-          </v-tab>
+        <!-- Color -->
+        <slot name="eventDetailsColor" v-bind="slotData">
+          <v-select v-if="$dayspan.supports.color"
+            label="颜色"
+            :items="$dayspan.colors"
+            :color="details.color"
+            :disabled="isReadOnly"
+            v-model="details.color">
+            <template slot="item" slot-scope="{ item }">
+              <v-list-tile-content>
+                <div class="ds-color-option" :style="{backgroundColor: item.value}" v-text="item.text"></div>
+              </v-list-tile-content>
+            </template>
+          </v-select>
+        </slot>
 
-          <v-tab href="#inclusions" v-if="showInclusions">
-            {{ labels.tabs.added }}
-          </v-tab>
+        <!-- Icon -->
+        <!-- <slot name="eventDetailsIcon" v-bind="slotData">
+          <v-select v-if="$dayspan.supports.icon"
+            single-line hide-details solo flat
+            :prepend-icon="details.icon || 'help'"
+            :items="$dayspan.icons"
+            :disabled="isReadOnly"
+            v-model="details.icon">
+            <template slot="item" slot-scope="{ item }">
+              <v-list-tile-avatar>
+                <v-icon>{{ item.value }}</v-icon>
+              </v-list-tile-avatar>
+              <v-list-tile-content>
+                {{ item.text }}
+              </v-list-tile-content>
+            </template>
+          </v-select>
+        </slot> -->
 
-          <v-tab href="#cancelled" v-if="showCancels">
-            {{ labels.tabs.cancelled }}
-          </v-tab>
+        <!-- Busy -->
+        <!-- <slot name="eventDetailsBusy" v-bind="slotData">
+          <v-select v-if="$dayspan.supports.busy"
+            single-line hide-details solo flat
+            prepend-icon="work"
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.busy"
+          ></v-select>
+        </slot> -->
 
-          <slot name="eventTabsExtra" v-bind="slotData"></slot>
+        <!-- <slot name="eventDetailsExtra" v-bind="slotData"></slot> -->
 
-          <!-- Details -->
-          <v-tab-item value="details" v-if="hasDetails">
-            <v-card flat>
-              <v-card-text>
+        <slot v-bind="slotData">
+          <v-select
+            label="类型" 
+            clearable
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.type"
+          ></v-select>
+        </slot>
 
-                <!-- Location -->
-                <slot name="eventDetailsLocation" v-bind="slotData">
-                  <v-text-field v-if="$dayspan.supports.location"
-                    single-line hide-details solo flat
-                    prepend-icon="location_on"
-                    :label="labels.location"
-                    :readonly="isReadOnly"
-                    v-model="details.location"
-                  ></v-text-field>
-                </slot>
+        <slot v-bind="slotData">
+          <v-text-field 
+            label="地点" 
+            :disabled="isReadOnly"
+            v-model="details.location"
+          ></v-text-field >
+        </slot>
 
-                <!-- Description -->
-                <slot name="eventDetailsDescription" v-bind="slotData">
-                  <v-textarea v-if="$dayspan.supports.description"
-                    hide-details single-line solo flat
-                    prepend-icon="subject"
-                    :label="labels.description"
-                    :readonly="isReadOnly"
-                    v-model="details.description"
-                  ></v-textarea>
-                </slot>
+        <slot v-bind="slotData">
+          <v-select
+            label="优先级" 
+            clearable
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.priority"
+          ></v-select>
+        </slot>
 
-                <!-- Calendar -->
-                <slot name="eventDetailsCalendar" v-bind="slotData">
-                  <v-text-field v-if="$dayspan.supports.calendar"
-                    single-line hide-details solo flat readonly
-                    prepend-icon="event"
-                    :label="labels.calendar"
-                    :readonly="isReadOnly"
-                    v-model="details.calendar"
-                  ></v-text-field>
-                </slot>
+        <slot v-bind="slotData">
+          <v-select
+            label="参与人" 
+            clearable
+            multiple
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.users"
+          ></v-select>
+        </slot>
 
-                <!-- Color -->
-                <slot name="eventDetailsColor" v-bind="slotData">
-                  <v-select v-if="$dayspan.supports.color"
-                    single-line hide-details solo flat
-                    prepend-icon="invert_colors"
-                    :items="$dayspan.colors"
-                    :color="details.color"
-                    :disabled="isReadOnly"
-                    v-model="details.color">
-                    <template slot="item" slot-scope="{ item }">
-                      <v-list-tile-content>
-                        <div class="ds-color-option" :style="{backgroundColor: item.value}" v-text="item.text"></div>
-                      </v-list-tile-content>
-                    </template>
-                  </v-select>
-                </slot>
+        <slot v-bind="slotData">
+          <v-select
+            label="参与部门" 
+            clearable
+            multiple
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.departments"
+          ></v-select>
+        </slot>
 
-                <!-- Icon -->
-                <slot name="eventDetailsIcon" v-bind="slotData">
-                  <v-select v-if="$dayspan.supports.icon"
-                    single-line hide-details solo flat
-                    :prepend-icon="details.icon || 'help'"
-                    :items="$dayspan.icons"
-                    :disabled="isReadOnly"
-                    v-model="details.icon">
-                    <template slot="item" slot-scope="{ item }">
-                      <v-list-tile-avatar>
-                        <v-icon>{{ item.value }}</v-icon>
-                      </v-list-tile-avatar>
-                      <v-list-tile-content>
-                        {{ item.text }}
-                      </v-list-tile-content>
-                    </template>
-                  </v-select>
-                </slot>
+        <slot v-bind="slotData">
+          <v-select
+            label="提醒方式" 
+            clearable
+            :items="busyOptions"
+            :disabled="isReadOnly"
+            v-model="details.reminders"
+          ></v-select>
+        </slot>
 
-                <!-- Busy -->
-                <slot name="eventDetailsBusy" v-bind="slotData">
-                  <v-select v-if="$dayspan.supports.busy"
-                    single-line hide-details solo flat
-                    prepend-icon="work"
-                    :items="busyOptions"
-                    :disabled="isReadOnly"
-                    v-model="details.busy"
-                  ></v-select>
-                </slot>
+        <slot v-bind="slotData">
+          <v-text-field 
+            label="提前多久提醒我"
+            :min=0
+            :max=1440
+            :rules="[rules.max1440]"
+            type="number"
+            :disabled="isReadOnly"
+            v-model="details.inAdvance"
+          ></v-text-field >
+        </slot>
 
-                <slot name="eventDetailsExtra" v-bind="slotData"></slot>
+        <slot v-bind="slotData">
+          <v-checkbox
+            label="是否通知" 
+            :disabled="isReadOnly"
+            v-model="details.notice"
+          ></v-checkbox>
+        </slot>
 
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
+        <slot v-bind="slotData">
+          <v-textarea
+            outline
+            label="备注"
+            :disabled="isReadOnly"
+            counter=2
+            v-model="details.remark"
+          ></v-textarea>
+        </slot>
 
-          <!-- Forecast -->
-          <v-tab-item value="forecast" lazy v-if="showForecast">
-            <v-card flat>
-              <v-card-text>
-                <slot name="eventForecast" v-bind="slotData">
-
-                  <ds-schedule-forecast
-                    :schedule="schedule"
-                    :day="day"
-                    :read-only="readOnly"
-                  ></ds-schedule-forecast>
-
-                </slot>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <!-- Exclusions -->
-          <v-tab-item value="exclusions" lazy v-if="showExclusions">
-            <v-card flat>
-              <v-card-text>
-                <slot name="eventExclusions" v-bind="slotData">
-
-                  <ds-schedule-modifier
-                    :description="labels.exclusions"
-                    :modifier="schedule.exclude"
-                    :read-only="readOnly"
-                  ></ds-schedule-modifier>
-
-                </slot>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <!-- Inclusions -->
-          <v-tab-item value="inclusions" lazy v-if="showInclusions">
-            <v-card flat>
-              <v-card-text>
-                <slot name="eventInclusions" v-bind="slotData">
-
-                  <ds-schedule-modifier
-                    :description="labels.inclusions"
-                    :modifier="schedule.include"
-                    :read-only="readOnly"
-                  ></ds-schedule-modifier>
-
-                </slot>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <!-- Cancelled -->
-          <v-tab-item value="cancelled" lazy v-if="showCancels">
-            <v-card flat>
-              <v-card-text>
-                <slot name="eventCancels" v-bind="slotData">
-
-                  <ds-schedule-modifier
-                    :description="labels.cancelled"
-                    :modifier="schedule.cancel"
-                    :read-only="readOnly"
-                  ></ds-schedule-modifier>
-
-                </slot>
-              </v-card-text>
-            </v-card>
-          </v-tab-item>
-
-          <slot name="eventTabItemsExtra" v-bind="slotData"></slot>
-
-        </v-tabs>
-      </v-flex>
-    </v-layout>
+      </v-card-text>
+    </v-card>
   </div>
 
 </template>
 
 <script>
 import { Day, Calendar, CalendarEvent, Schedule, Functions as fn } from 'dayspan';
-
+import { getDictDataByType, getDepartmentTree } from "@/api/index";
 
 export default {
 
@@ -420,7 +407,12 @@ export default {
   data: vm => ({
     tab: 'details',
     schedule: new Schedule(),
-    details: vm.$dayspan.getDefaultEventDetails()
+    details: vm.$dayspan.getDefaultEventDetails(),
+    rules: {
+      required: value => !!value || '必填！',
+      min8: v => v.length >= 8 || '至少8个字符',
+      max1440: v => v <= 1440 || '最大为1440',
+    },
   }),
 
   watch:
@@ -522,7 +514,7 @@ export default {
     save()
     {
       var ev = this.getEvent('save')
-
+      debugger
       this.$emit('save', ev);
 
       if (!ev.handled)
@@ -616,8 +608,36 @@ export default {
         $element: this.$el
 
       }, extra);
-    }
-
+    },
+    init() {
+      this.initDepts();
+      this.initDicts();
+    },
+    initDicts() {
+      getDictDataByType('scheduleType').then(res=>{
+        if(res.success){
+          this.scheduleTypes = res.result
+        }
+      })
+      getDictDataByType('schedulePriority').then(res=>{
+        if(res.success){
+          this.schedulePrioritys = res.result
+        }
+      })
+      getDictDataByType('scheduleReminder').then(res=>{
+        if(res.success){
+          this.scheduleReminders = res.result
+        }
+      })
+    },
+    initDepts() {
+      getDepartmentTree().then(res => {
+        this.departments = res.result
+      })
+    },
+  },
+  mounted() {
+    this.init();
   }
 }
 </script>

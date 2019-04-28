@@ -5,18 +5,12 @@
       :calendar="calendar"
       :read-only="readOnly"
       @change="saveState">
-
+<!-- 
       <template slot="title">
-        DaySpan
+        日历
       </template>
 
-      <template slot="menuRight">
-        <v-btn icon large href="https://github.com/ClickerMonkey/dayspan-vuetify" target="_blank">
-          <v-avatar size="32px" tile>
-            <img src="https://simpleicons.org/icons/github.svg" alt="Github">
-          </v-avatar>
-        </v-btn>
-      </template>
+
 
       <template slot="eventPopover" slot-scope="slotData">
          <ds-calendar-event-popover
@@ -24,9 +18,9 @@
           :read-only="readOnly"
           @finish="saveState"
         ></ds-calendar-event-popover>
-      </template>
+      </template> -->
 
-      <template slot="eventCreatePopover" slot-scope="{placeholder, calendar, close}">
+      <!-- <template slot="eventCreatePopover" slot-scope="{placeholder, calendar, close}">
         <ds-calendar-event-create-popover
           :calendar-event="placeholder"
           :calendar="calendar"
@@ -34,9 +28,9 @@
           @create-edit="$refs.app.editPlaceholder"
           @create-popover-closed="saveState"
         ></ds-calendar-event-create-popover>
-      </template>
+      </template> -->
 
-      <template slot="eventTimeTitle" slot-scope="{calendarEvent, details}">
+     <!--  <template slot="eventTimeTitle" slot-scope="{calendarEvent, details}">
         <div>
           <v-icon class="ds-ev-icon"
             v-if="details.icon"
@@ -54,7 +48,7 @@
           <v-layout wrap align-center>
             <v-flex xs12>
               <v-checkbox box
-                label="Read Only?"
+                label="只 读?"
                 v-model="readOnly"
               ></v-checkbox>
             </v-flex>
@@ -68,7 +62,7 @@
             </v-flex>
           </v-layout>
         </v-container>
-      </template>
+      </template> -->
 
     </ds-calendar-app>
 
@@ -91,14 +85,12 @@ export default {
     currentLocale: vm.$dayspan.currentLocale,
     locales: [
       { value: 'en', text: 'English' },
-      { value: 'fr', text: 'French' },
-      { value: 'nl', text: 'Dutch' },
-      { value: 'ca', text: 'Catalan' }
+      { value: 'zh', text: '中文' },
     ],
     defaultEvents: [
       {
         data: {
-          title: 'Weekly Meeting',
+          title: '周会',
           color: '#3F51B5'
         },
         schedule: {
@@ -110,7 +102,7 @@ export default {
       },
       {
         data: {
-          title: 'First Weekend',
+          title: '第一个周末',
           color: '#4CAF50'
         },
         schedule: {
@@ -122,7 +114,7 @@ export default {
       },
       {
         data: {
-          title: 'End of Month',
+          title: '月末',
           color: '#000000'
         },
         schedule: {
@@ -131,145 +123,6 @@ export default {
           durationUnit: 'hours'
         }
       },
-      {
-        data: {
-          title: 'Mother\'s Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.MAY],
-          dayOfWeek: [Weekday.SUNDAY],
-          weekspanOfMonth: [1]
-        }
-      },
-      {
-        data: {
-          title: 'New Year\'s Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.JANUARY],
-          dayOfMonth: [1]
-        }
-      },
-      {
-        data: {
-          title: 'Inauguration Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.JANUARY],
-          dayOfMonth: [20]
-        }
-      },
-      {
-        data: {
-          title: 'Martin Luther King, Jr. Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.JANUARY],
-          dayOfWeek: [Weekday.MONDAY],
-          weekspanOfMonth: [2]
-        }
-      },
-      {
-        data: {
-          title: 'George Washington\'s Birthday',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.FEBRUARY],
-          dayOfWeek: [Weekday.MONDAY],
-          weekspanOfMonth: [2]
-        }
-      },
-      {
-        data: {
-          title: 'Memorial Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.MAY],
-          dayOfWeek: [Weekday.MONDAY],
-          lastWeekspanOfMonth: [0]
-        }
-      },
-      {
-        data: {
-          title: 'Independence Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.JULY],
-          dayOfMonth: [4]
-        }
-      },
-      {
-        data: {
-          title: 'Labor Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.SEPTEMBER],
-          dayOfWeek: [Weekday.MONDAY],
-          lastWeekspanOfMonth: [0]
-        }
-      },
-      {
-        data: {
-          title: 'Columbus Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.OCTOBER],
-          dayOfWeek: [Weekday.MONDAY],
-          weekspanOfMonth: [1]
-        }
-      },
-      {
-        data: {
-          title: 'Veterans Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.NOVEMBER],
-          dayOfMonth: [11]
-        }
-      },
-      {
-        data: {
-          title: 'Thanksgiving Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.NOVEMBER],
-          dayOfWeek: [Weekday.THURSDAY],
-          weekspanOfMonth: [3]
-        }
-      },
-      {
-        data: {
-          title: 'Christmas Day',
-          color: '#2196F3',
-          calendar: 'US Holidays'
-        },
-        schedule: {
-          month: [Month.DECEMBER],
-          dayOfMonth: [25]
-        }
-      }
     ]
   }),
 

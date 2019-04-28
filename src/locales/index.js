@@ -1,10 +1,8 @@
 
-import en from './en'
-import nl from './nl'
+import zh from './zh'
 
 export default {
-  'en': en,
-  'en-US': en
+  'zh': zh
 }
 
-export const defaultLocale = 'en'
+export const defaultLocale = 'zh'

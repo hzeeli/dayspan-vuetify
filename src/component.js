@@ -244,14 +244,18 @@ export default {
     getDefaultEventDetails()
     {
       return {
-        title: '',
-        description: '',
-        location: '',
+        subject: '',      //任务名
+        remark: '',       //备注
+        location: '',     //地点
+        type: {},         //任务类型
+        priority: {},      //优先级
+        users: [],        //参与人
+        departments: [],  //参与部门
+        reminders: {},    //提醒方式
+        inAdvance: 0,     //提前多久提醒我
+        notice: true,     //是否通知
         color: this.getDefaultEventColor(),
         forecolor: '#ffffff',
-        calendar: '',
-        busy: true,
-        icon: ''
       };
     },
 
@@ -262,7 +266,7 @@ export default {
 
     isValidEvent(details, schedule, calendarEvent)
     {
-      return !!details.title;
+      return !!details.subject;
     },
 
     requiresPermission(type)
