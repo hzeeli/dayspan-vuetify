@@ -12,7 +12,7 @@ export function saveSchedule(data) {
 //获取全部日历事件
 export function getAllSchedule(params) {
   return request({
-    url: '/department/tree',
+    url: '/schedule/myScheduleList',
     params: params,
     method: 'get',
   })
