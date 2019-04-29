@@ -73,6 +73,7 @@
 import { dsMerge } from './functions';
 import { Calendar, Weekday, Month, Sorts } from 'dayspan';
 import * as moment from 'moment';
+import { getDictDataByType, getDepartmentTree, saveSchedule, getAllSchedule } from "@/api/index";
 
 export default {
 
@@ -87,56 +88,20 @@ export default {
       { value: 'en', text: 'English' },
       { value: 'zh', text: '中文' },
     ],
-    defaultEvents: [
-      {
-        data: {
-          title: '周会',
-          color: '#3F51B5'
-        },
-        schedule: {
-          dayOfWeek: [Weekday.MONDAY],
-          times: [9],
-          duration: 30,
-          durationUnit: 'minutes'
-        }
-      },
-      {
-        data: {
-          title: '第一个周末',
-          color: '#4CAF50'
-        },
-        schedule: {
-          weekspanOfMonth: [0],
-          dayOfWeek: [Weekday.FRIDAY],
-          duration: 3,
-          durationUnit: 'days'
-        }
-      },
-      {
-        data: {
-          title: '月末',
-          color: '#000000'
-        },
-        schedule: {
-          lastDayOfMonth: [1],
-          duration: 1,
-          durationUnit: 'hours'
-        }
-      },
-    ]
   }),
-
-  mounted()
-  {
+  created() {
+    let val = window.top.document.getElementById("par_box");
+    this.$store.dispatch('setToken', val)
+  },
+  mounted() {
     window.app = this.$refs.app;
 
     this.loadState();
+    this.init();
   },
 
-  methods:
-  {
-    getCalendarTime(calendarEvent)
-    {
+  methods: {
+    getCalendarTime(calendarEvent) {
       let sa = calendarEvent.start.format('a');
       let ea = calendarEvent.end.format('a');
       let sh = calendarEvent.start.format('h');
@@ -155,8 +120,7 @@ export default {
       return (sa === ea) ? (sh + ' - ' + eh + ea) : (sh + sa + ' - ' + eh + ea);
     },
 
-    setLocale(code)
-    {
+    setLocale(code) {
       moment.lang(code);
 
       this.$dayspan.setLocale(code);
@@ -165,48 +129,66 @@ export default {
       this.$refs.app.$forceUpdate();
     },
 
-    saveState()
-    {
-      let state = this.calendar.toInput(true);
+    saveState() {//保存日历事件
+      /* let state = this.calendar.toInput(true);
       let json = JSON.stringify(state);
 
-      localStorage.setItem(this.storeKey, json);
+      localStorage.setItem(this.storeKey, json); */
     },
 
-    loadState()
-    {
+    loadState() {//加载日历事件
       let state = {};
-
-      try
-      {
-        let savedState = JSON.parse(localStorage.getItem(this.storeKey));
-
-        if (savedState)
-        {
-          state = savedState;
-          state.preferToday = false;
+      getAllSchedule().then(res=>{
+        try {
+          /* let savedState = JSON.parse(localStorage.getItem(this.storeKey)); */
+          let savedState = res.result
+          if (savedState) {
+            state = savedState;
+            state.preferToday = false;
+          }
         }
-      }
-      catch (e)
-      {
-        console.log( e );
-      }
+        catch (e) {
+          console.log( e );
+        }
 
-      if (!state.events || !state.events.length)
-      {
-        state.events = this.defaultEvents;
-      }
+        let defaults = this.$dayspan.getDefaultEventDetails();
 
-      let defaults = this.$dayspan.getDefaultEventDetails();
+        state.events.forEach(ev => {
+          ev.data = dsMerge( ev.data, defaults );
+        });
 
-      state.events.forEach(ev =>
-      {
-        ev.data = dsMerge( ev.data, defaults );
-      });
+        this.$refs.app.setState( state );
 
-      this.$refs.app.setState( state );
-    }
-  }
+      })
+      
+    },
+    init() {
+      this.initDepts();
+      this.initDicts();
+    },
+    initDicts() {
+      getDictDataByType('scheduleType').then(res=>{
+        if(res.success){
+          this.$store.dispatch('setScheduleTypes', res.result)
+        }
+      })
+      getDictDataByType('schedulePriority').then(res=>{
+        if(res.success){
+          this.$store.dispatch('setSchedulePrioritys', res.result)
+        }
+      })
+      getDictDataByType('scheduleReminder').then(res=>{
+        if(res.success){
+          this.$store.dispatch('setScheduleReminder', res.result)
+        }
+      })
+    },
+    initDepts() {
+      getDepartmentTree().then(res => {
+        this.$store.dispatch('setDepartments', res.result)
+      })
+    },
+  },
 }
 </script>
 

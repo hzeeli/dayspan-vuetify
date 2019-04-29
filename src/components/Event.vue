@@ -93,39 +93,6 @@
     <v-card flat>
       <v-card-text>
 
-        <!-- Location -->
-        <!-- <slot name="eventDetailsLocation" v-bind="slotData">
-          <v-text-field v-if="$dayspan.supports.location"
-            single-line hide-details solo flat
-            prepend-icon="location_on"
-            :label="labels.location"
-            :readonly="isReadOnly"
-            v-model="details.location"
-          ></v-text-field>
-        </slot>
- -->
-        <!-- Description -->
-        <!-- <slot name="eventDetailsDescription" v-bind="slotData">
-          <v-textarea v-if="$dayspan.supports.description"
-            hide-details single-line solo flat
-            prepend-icon="subject"
-            :label="labels.description"
-            :readonly="isReadOnly"
-            v-model="details.description"
-          ></v-textarea>
-        </slot> -->
-
-        <!-- Calendar -->
-        <!-- <slot name="eventDetailsCalendar" v-bind="slotData">
-          <v-text-field v-if="$dayspan.supports.calendar"
-            single-line hide-details solo flat readonly
-            prepend-icon="event"
-            :label="labels.calendar"
-            :readonly="isReadOnly"
-            v-model="details.calendar"
-          ></v-text-field>
-        </slot> -->
-
         <!-- Color -->
         <slot name="eventDetailsColor" v-bind="slotData">
           <v-select v-if="$dayspan.supports.color"
@@ -141,38 +108,6 @@
             </template>
           </v-select>
         </slot>
-
-        <!-- Icon -->
-        <!-- <slot name="eventDetailsIcon" v-bind="slotData">
-          <v-select v-if="$dayspan.supports.icon"
-            single-line hide-details solo flat
-            :prepend-icon="details.icon || 'help'"
-            :items="$dayspan.icons"
-            :disabled="isReadOnly"
-            v-model="details.icon">
-            <template slot="item" slot-scope="{ item }">
-              <v-list-tile-avatar>
-                <v-icon>{{ item.value }}</v-icon>
-              </v-list-tile-avatar>
-              <v-list-tile-content>
-                {{ item.text }}
-              </v-list-tile-content>
-            </template>
-          </v-select>
-        </slot> -->
-
-        <!-- Busy -->
-        <!-- <slot name="eventDetailsBusy" v-bind="slotData">
-          <v-select v-if="$dayspan.supports.busy"
-            single-line hide-details solo flat
-            prepend-icon="work"
-            :items="busyOptions"
-            :disabled="isReadOnly"
-            v-model="details.busy"
-          ></v-select>
-        </slot> -->
-
-        <!-- <slot name="eventDetailsExtra" v-bind="slotData"></slot> -->
 
         <slot v-bind="slotData">
           <v-select
@@ -272,7 +207,7 @@
 
 <script>
 import { Day, Calendar, CalendarEvent, Schedule, Functions as fn } from 'dayspan';
-import { getDictDataByType, getDepartmentTree } from "@/api/index";
+import { mapGetters } from 'vuex'
 
 export default {
 
@@ -430,10 +365,14 @@ export default {
     }
   },
 
-  computed:
-  {
-    slotData()
-    {
+  computed: {
+    ...mapGetters([
+      'scheduleTypes',
+      'schedulePrioritys',
+      'scheduleReminder',
+      'departments'
+    ]),
+    slotData() {
       return {
         targetSchedule: this.targetSchedule,
         targetDetails: this.targetDetails,
@@ -448,63 +387,54 @@ export default {
       };
     },
 
-    classes()
-    {
+    classes() {
       return {
         'ds-has-cancel': this.hasCancel,
         'ds-event-small': this.$vuetify.breakpoint.smAndDown
       };
     },
 
-    canSave()
-    {
+    canSave() {
       return this.$dayspan.isValidEvent( this.details, this.schedule, this.calenderEvent );
     },
 
-    repeats()
-    {
+    repeats() {
       return !this.schedule.isSingleEvent();
     },
 
-    showTitle()
-    {
+    showTitle() {
       return this.$dayspan.supports.title &&
         this.hasTitle;
     },
 
-    showCancels()
-    {
+    showCancels() {
       return this.$dayspan.features.cancel &&
         this.repeats &&
         this.hasCancelled &&
         !this.schedule.cancel.isEmpty();
     },
 
-    showForecast()
-    {
+    showForecast() {
       return this.$dayspan.features.forecast &&
         this.repeats &&
         this.hasForecast;
     },
 
-    showExclusions()
-    {
+    showExclusions() {
       return this.$dayspan.features.exclude &&
         this.repeats &&
         this.hasExclusions &&
         !this.schedule.exclude.isEmpty();
     },
 
-    showInclusions()
-    {
+    showInclusions() {
       return this.$dayspan.features.include &&
         this.repeats &&
         this.hasInclusions &&
         !this.schedule.include.isEmpty();
     },
 
-    isReadOnly()
-    {
+    isReadOnly() {
       return this.readOnly || this.$dayspan.readOnly;
     }
   },
@@ -564,6 +494,14 @@ export default {
       }
 
       this.$emit('saved', ev);
+
+      //保存新添或更改的事件
+      let obj = {
+        time: ev.day.time,
+        duration: ev.schedule.duration,
+        data: ev.details
+      }
+
     },
 
     actioned(ev)
@@ -609,35 +547,9 @@ export default {
 
       }, extra);
     },
-    init() {
-      this.initDepts();
-      this.initDicts();
-    },
-    initDicts() {
-      getDictDataByType('scheduleType').then(res=>{
-        if(res.success){
-          this.scheduleTypes = res.result
-        }
-      })
-      getDictDataByType('schedulePriority').then(res=>{
-        if(res.success){
-          this.schedulePrioritys = res.result
-        }
-      })
-      getDictDataByType('scheduleReminder').then(res=>{
-        if(res.success){
-          this.scheduleReminders = res.result
-        }
-      })
-    },
-    initDepts() {
-      getDepartmentTree().then(res => {
-        this.departments = res.result
-      })
-    },
   },
   mounted() {
-    this.init();
+    
   }
 }
 </script>

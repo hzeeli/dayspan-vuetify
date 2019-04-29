@@ -3,6 +3,8 @@ import Vuetify from 'vuetify'
 import DaySpanVuetify from './plugin'
 import App from './app'
 
+import store from './store'
+
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import './styles/app.scss'
@@ -38,5 +40,6 @@ Vue.use(DaySpanVuetify,
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   render: h => h(App)
 })

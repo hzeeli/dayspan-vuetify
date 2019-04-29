@@ -273,10 +273,10 @@ export default {
 
   methods:
   {
-    remove()
-    {
-      this.$dayspan.getPermission('actionRemove', () =>
-      {
+    remove() {
+      
+      this.$dayspan.getPermission('actionRemove', () => {
+        debugger
         var ev = this.getEvent('remove');
 
         this.$emit('remove', ev);

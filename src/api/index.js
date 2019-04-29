@@ -1,11 +1,20 @@
 import request from '@/utils/request'
 
-// 
-export function xxxxx(params) {
+// 保存日历事件
+export function saveSchedule(data) {
   return request({
-    url: '',
+    url: '/schedule',
+    method: 'post',
+    data,
+  })
+}
+
+//获取全部日历事件
+export function getAllSchedule(params) {
+  return request({
+    url: '/department/tree',
+    params: params,
     method: 'get',
-    params,
   })
 }
 

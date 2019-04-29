@@ -69,8 +69,7 @@ export default {
 
   name: 'dsCalendar',
 
-  props:
-  {
+  props: {
     calendar:
     {
       type: Calendar
